@@ -58,11 +58,12 @@ button{
 #menuContainer{
     display: inline;
     padding: 3px;
-    border-left: black 1px solid;
-    border-right: black 1px solid;
+    border-left: white 1px solid;
+    border-right: white 1px solid;
     font-family: veranda;
     font-size: 18px;
     text-decoration: none;
+    color: white !important;
 }
 #menuContianer:hover{
     background: blue;
@@ -1698,11 +1699,11 @@ button{
 }
 a:link{
     text-decoration: none;
-    color: black;
+    color: white !important;
 }
 a:visited{
     text-decoration: none;
-    color: black;
+    color: white;
 }
 a:hover{
     text-decoration: underline;
@@ -1779,4 +1780,4 @@ a:active{
 #scopeButton:active{
     background-color: yellow;
     color: white;
-}
+}/**/
