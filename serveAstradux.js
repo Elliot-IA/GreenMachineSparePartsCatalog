@@ -458,8 +458,6 @@ const getAllDirFiles = function(dirPath, arrayOfFiles){     //This is used to lo
     })
     return arrayOfFiles
 }
-//update_FILECOUNTjs();
-
 
 
 function addPart(partData, firstTime, res){
