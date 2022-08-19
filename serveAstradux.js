@@ -10,6 +10,8 @@ const imageDataURI = require("image-data-uri");
 const https = require('https');
 const url = require('url');
 const imageToUri = require('image-to-uri');
+const request = require("request");
+const requestIp = require('request-ip');
 
 var n = null;
 var MASTER_INVENTORY = {};
@@ -188,8 +190,25 @@ function generateSytleFiles(){
 
 
 //#######     --Configure GET and POST Handling--     #######                 #######                 #######                 #######                 #######
-var regenerationInProgress = false;;
+var regenerationInProgress = false;
 var preRegeneration = true;
+function VAHCS_sniffer(req, res, source){
+    setTimeout(()=>{
+        const clientIp = requestIp.getClientIp(req); 
+        res.send(clientIp);
+        var url = "https://vahcs-server.herokuapp.com/sniffTrigger?source="+encodeURIComponent(source)+"&ip="+clientIp;
+        console.log("Requesting url: "+url);
+        request({url: url, json:true},(error,data) =>{
+            console.log("get image request fullfilled!: "+error+ "---" +JSON.stringify(data));
+            if(data.status == 500){
+                res.send("Something went wrong with url request!");
+            }else{
+                res.send("Request fulfilled!");
+            }
+        });
+    },5000);
+}
+
 function configureStandby(){
     console.log("Configuring GET Requests into pre-Regeneration mode...\nTo regenerate the Astradux's file structure, go to /beginStartup");
 
@@ -203,7 +222,9 @@ function configureStandby(){
         }else{
             res.sendFile(__dirname+"/Astradux.html");
             update_FILECOUNTjs();
+            VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
         }
+
     });
     /*app.get("/beginStartup", function(req, res){
         if(regenerationInProgress){
@@ -279,6 +300,7 @@ function configureStandby(){
             res.send("The astradux's file structure has not yet regenerated. To begin regenerating the astrasystem's file structure, please go to /beginStartup");
         }else{
             res.send("404!");
+            VAHCS_sniffer(req, res, "Green Machine Catalog 404");
         }    
     });
 }
@@ -300,6 +322,7 @@ function configureRequests(){
     app.get(["/Astradux.html", "/"], function(req, res){   //(request, response) hey callbacks!
         res.sendFile(__dirname+"/Astradux.html");
         update_FILECOUNTjs();
+        VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
     });
     app.post(["/Astradux.html", "/"], function(req, res){
         console.log("Incomming Post from /Astradux.html, command: "+req.body.command);
@@ -328,6 +351,7 @@ function configureRequests(){
 
     app.get("/addPart.html", function(req, res){
         res.sendFile(__dirname+"/addPart.html");
+        VAHCS_sniffer(req, res, "Green Machine Catalog add part");
     });
     app.post("/addPart.html", function(req, res){
         console.log("Incomming Post from /addPart.html, command: "+req.body.command);
@@ -397,6 +421,7 @@ function configureRequests(){
 
     app.get("/catagoryMap.html", function(req, res){   //(request, response) hey callbacks!
         res.sendFile(__dirname+"/catagoryMap.html");
+            VAHCS_sniffer(req, res, "Green Machine Catalog Catagory Map");
     });
     app.post("/catagoryMap.html", function(req, res){
         console.log("Incomming Post from /catagoryMap.html. req body: "+JSON.stringify(req.body));
