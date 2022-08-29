@@ -208,7 +208,7 @@ function VAHCS_sniffer(req, res, source){
                 res.send("Request fulfilled!");
             }
         });
-    },1000);
+    },5000);
 }
 
 function configureStandby(){
@@ -222,9 +222,9 @@ function configureStandby(){
                 res.send("To begin regenerating the astrasystem's file structure, please go to /beginStartup");
             }
         }else{
+            VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
             res.sendFile(__dirname+"/Astradux.html");
             update_FILECOUNTjs();
-            VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
         }
 
     });
