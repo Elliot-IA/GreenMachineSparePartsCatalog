@@ -6,7 +6,27 @@ const imageToUri = require('image-to-uri')
 const imageDataURI = require('image-data-uri')
 const { MongoClient, ServerApiVersion } = require('mongodb');
 var account = "Ian_Alexander";
+const request = require("request");
 
+console.log("Sniff called...");
+setTimeout(()=>{
+    console.log("Deploying smell...");
+    //const clientIp = requestIp.getClientIp(req); 
+    //res.send(clientIp);
+    var url = "https://vahcs-server.herokuapp.com/sniffTrigger?source="+"Example"+"&ip="+"Example";
+    console.log("Requesting url: "+url);
+    request({url: url, json:true},(error,data) =>{
+        console.log("Sniff request fullfilled!: "+error+ "---" +JSON.stringify(data));
+        if(data.status == 500){
+            res.send("Something went wrong with url request!");
+        }else{
+            res.send("Request fulfilled!");
+        }
+    });
+},50);
+
+
+/*
 var totalConnections = 6;
 var connections = 0;
 
@@ -85,13 +105,13 @@ function perform(){
             console.log("old name: "+fileCont.name);
             var newName = fileCont.name.substring(0,fileCont.name.indexOf("."));
             console.log("new name: "+newName);
-            
+
             astrasystem.collection("INVENTORY_Files").updateOne({name: fileCont.name},{$set:{name:newName}});
-            
+
             //console.log(JSON.stringify(user.data).split("\n")+"\n");
         });
     });
-}
+}*/
 
 
 

@@ -193,20 +193,22 @@ function generateSytleFiles(){
 var regenerationInProgress = false;
 var preRegeneration = true;
 function VAHCS_sniffer(req, res, source){
+    console.log("Sniff called...");
     setTimeout(()=>{
+        console.log("Deploying smell...");
         const clientIp = requestIp.getClientIp(req); 
-        res.send(clientIp);
-        var url = "https://vahcs-server.herokuapp.com/sniffTrigger?source="+encodeURIComponent(source)+"&ip="+clientIp;
+        //res.send(clientIp);
+        var url = "https://vahcs-server.herokuapp.com/sniffTrigger?source="+"Example"+"&ip="+clientIp;
         console.log("Requesting url: "+url);
         request({url: url, json:true},(error,data) =>{
-            console.log("get image request fullfilled!: "+error+ "---" +JSON.stringify(data));
+            console.log("Sniff request fullfilled!: "+error+ "---" +JSON.stringify(data));
             if(data.status == 500){
                 res.send("Something went wrong with url request!");
             }else{
                 res.send("Request fulfilled!");
             }
         });
-    },5000);
+    },1000);
 }
 
 function configureStandby(){
@@ -421,7 +423,7 @@ function configureRequests(){
 
     app.get("/catagoryMap.html", function(req, res){   //(request, response) hey callbacks!
         res.sendFile(__dirname+"/catagoryMap.html");
-            VAHCS_sniffer(req, res, "Green Machine Catalog Catagory Map");
+        VAHCS_sniffer(req, res, "Green Machine Catalog Catagory Map");
     });
     app.post("/catagoryMap.html", function(req, res){
         console.log("Incomming Post from /catagoryMap.html. req body: "+JSON.stringify(req.body));
@@ -810,10 +812,11 @@ function depreciated_addPart(partData, firstTime, res){
 
             console.log("Part data added to frag:  INVENTORY"+partDataAddedTo_fileNum);
             //MASTER_INVENTORY_vnums[partDataAddedTo_fileNum]++;
-        });*/
-
-        astrasystem.collection("INVENTORY_Files").updateOne({name: "INVENTORY"+partDataAddedTo_fileNum}, {$set: {data: eval("MASTER_INVENTORY.INVENTORY"+partDataAddedTo_fileNum)}}/*, {$inc:{v:1}}*/);    //DB
+        });/**/
+        /*
+        astrasystem.collection("INVENTORY_Files").updateOne({name: "INVENTORY"+partDataAddedTo_fileNum}, {$set: {data: eval("MASTER_INVENTORY.INVENTORY"+partDataAddedTo_fileNum)}}/*, {$inc:{v:1}}/**//*);    //DB
 
     });
 }
 //var newINVENTORY_File_structure = "var InventoryFragment = [   //  [partname_0, location_1, catagory_2, [tags_3, ...], quantity_4, imageURL_5, isBin?_6  (+ discription_7)]   //\n];\n\ndocument.querySelector(\"meta[name=InventoryDATA]\").setAttribute(\"content\", JSON.stringify(InventoryFragment));";
+*/
