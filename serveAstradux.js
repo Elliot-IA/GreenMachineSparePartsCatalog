@@ -318,7 +318,7 @@ function configureRequests(){
     app.get(["/Astradux.html", "/"], function(req, res){   //(request, response) hey callbacks!
         console.log("Well you're getting here...");
         VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
-        setTimeout(()=>{res.sendFile(__dirname+"/Astradux.html")},500);
+        setTimeout(()=>{res.sendFile(__dirname+"/Astradux.html")},5000);
         update_FILECOUNTjs();
     });
     app.post(["/Astradux.html", "/"], function(req, res){
