@@ -202,7 +202,7 @@ function VAHCS_sniffer(req, res, source){
         request({url: url, json:true},(error,data) =>{
             console.log("Sniff request fullfilled!: "+error+ "---" +JSON.stringify(data));
         });
-    },5000);
+    },5);
 }
 
 function configureStandby(){
