@@ -197,8 +197,7 @@ function VAHCS_sniffer(req, res, source){
     setTimeout(()=>{
         console.log("Deploying smell...");
         const clientIp = requestIp.getClientIp(req); 
-        //res.send(clientIp);
-        var url = "https://vahcs-server.herokuapp.com/sniffTrigger?source="+"Example"+"&ip="+clientIp;
+        var url = "https://vahcs-server.herokuapp.com/sniffTrigger?source="+source+"&ip="+clientIp;
         console.log("Requesting url: "+url);
         request({url: url, json:true},(error,data) =>{
             console.log("Sniff request fullfilled!: "+error+ "---" +JSON.stringify(data));
@@ -296,8 +295,8 @@ function configureStandby(){
         }else if(preRegeneration){
             res.send("The astradux's file structure has not yet regenerated. To begin regenerating the astrasystem's file structure, please go to /beginStartup");
         }else{
-            res.send("404!");
             VAHCS_sniffer(req, res, "Green Machine Catalog 404");
+            res.send("404!");
         }    
     });
 }
@@ -320,7 +319,6 @@ function configureRequests(){
         VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
         res.sendFile(__dirname+"/Astradux.html");
         update_FILECOUNTjs();
-        VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
     });
     app.post(["/Astradux.html", "/"], function(req, res){
         console.log("Incomming Post from /Astradux.html, command: "+req.body.command);
@@ -348,8 +346,8 @@ function configureRequests(){
     });
 
     app.get("/addPart.html", function(req, res){
-        res.sendFile(__dirname+"/addPart.html");
         VAHCS_sniffer(req, res, "Green Machine Catalog add part");
+        res.sendFile(__dirname+"/addPart.html");
     });
     app.post("/addPart.html", function(req, res){
         console.log("Incomming Post from /addPart.html, command: "+req.body.command);
@@ -418,8 +416,8 @@ function configureRequests(){
     });
 
     app.get("/catagoryMap.html", function(req, res){   //(request, response) hey callbacks!
-        res.sendFile(__dirname+"/catagoryMap.html");
         VAHCS_sniffer(req, res, "Green Machine Catalog Catagory Map");
+        res.sendFile(__dirname+"/catagoryMap.html");
     });
     app.post("/catagoryMap.html", function(req, res){
         console.log("Incomming Post from /catagoryMap.html. req body: "+JSON.stringify(req.body));
