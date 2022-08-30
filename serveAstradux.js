@@ -202,11 +202,6 @@ function VAHCS_sniffer(req, res, source){
         console.log("Requesting url: "+url);
         request({url: url, json:true},(error,data) =>{
             console.log("Sniff request fullfilled!: "+error+ "---" +JSON.stringify(data));
-            if(data.status == 500){
-                res.send("Something went wrong with url request!");
-            }else{
-                res.send("Request fulfilled!");
-            }
         });
     },5000);
 }
@@ -322,6 +317,7 @@ function configureRequests(){
     console.log("Configuring GET and POST Requests\n");
 
     app.get(["/Astradux.html", "/"], function(req, res){   //(request, response) hey callbacks!
+        VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
         res.sendFile(__dirname+"/Astradux.html");
         update_FILECOUNTjs();
         VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
