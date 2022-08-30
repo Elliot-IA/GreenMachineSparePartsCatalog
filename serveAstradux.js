@@ -316,8 +316,9 @@ function configureRequests(){
     console.log("Configuring GET and POST Requests\n");
 
     app.get(["/Astradux.html", "/"], function(req, res){   //(request, response) hey callbacks!
+        console.log("Well you're getting here...");
         VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
-        res.sendFile(__dirname+"/Astradux.html");
+        setTimeout(()=>{res.sendFile(__dirname+"/Astradux.html")},500);
         update_FILECOUNTjs();
     });
     app.post(["/Astradux.html", "/"], function(req, res){
@@ -326,12 +327,7 @@ function configureRequests(){
             console.log("ModData from main.js: " + req.body.data);
             modifyPartData(req.body.data, res);
             res.status(204).send();
-        }/*else if(req.body.command == "setUpMod"){
-            console.log("setUpMod Triggered: Part Data from main.js:" + req.body.data);
-            setUpPartMod(req.body.data, eval(req.body.fileN));
-            res.status(204).send();
-            //res.sendFile(__dirname+"/addPart.html");
-        }*/else if(req.body.command == "resetSEARCHQUERY"){
+        }else if(req.body.command == "resetSEARCHQUERY"){
             console.log("Emptying SEARCHQUERY.js");
             update_searchDATA(req.body.data);
             res.status(204).send();
@@ -346,7 +342,7 @@ function configureRequests(){
     });
 
     app.get("/addPart.html", function(req, res){
-        VAHCS_sniffer(req, res, "Green Machine Catalog add part");
+        VAHCS_sniffer(req, res, "Green Machine Catalog addPart");
         res.sendFile(__dirname+"/addPart.html");
     });
     app.post("/addPart.html", function(req, res){
