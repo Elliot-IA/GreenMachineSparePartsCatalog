@@ -1,4 +1,4 @@
-console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n~~serveAstradux.js initiated...~~\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n~~serveGMPartsCatalog.js initiated...~~\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
 //#######     --Import Node Modules--     #######                 #######                 #######                 #######                 #######
 const express = require("express"); 
@@ -138,27 +138,10 @@ function collect_ASTRAGLOBALS(){
         });
     });
 }
-
-/*function regenerateDataFiles(){
-    astrasystem.collection("DATA_Files").find().toArray((error, dataFiles)=>{
-        var numFiles = dataFiles.length;
-        console.log("Regenerating Data Files...\t("+numFiles+")");
-        var processedFiles = 0;
-        dataFiles.forEach((file)=>{
-            generateFile(file.name, file.data, "./Data_Files/"+file.name);
-            processedFiles++;
-            if(numFiles ==  processedFiles){
-                console.log("v/ Data File Regeneration Complete!\n");
-                configureRequests();
-            }
-        });
-    });
-}*/
 function generateFile(fileName, fileContents, filePath){
     fs.writeFileSync(filePath, fileContents);
     console.log("Inv File: "+fileName+" - done regenerating");
 }
-
 function generateSytleFiles(){
     console.log("Generating Style_Files (CSS & JS)...");
     console.log("Style parameters pulled from colors.json: ");
@@ -192,12 +175,13 @@ function generateSytleFiles(){
 //#######     --Configure GET and POST Handling--     #######                 #######                 #######                 #######                 #######
 var regenerationInProgress = false;
 var preRegeneration = true;
-function VAHCS_sniffer(req, res, source){
+var nullTokens = [];
+function VAHCS_sniffer(token, source){
     console.log("Sniff called...");
     setTimeout(()=>{
         console.log("Deploying smell...");
-        const clientIp = requestIp.getClientIp(req); 
-        var url = "https://vahcs-server.herokuapp.com/sniffTrigger?source="+source+"&ip="+clientIp;
+        //const clientIp = requestIp.getClientIp(req); 
+        var url = "https://vahcs-server.herokuapp.com/sniffTrigger?source="+source+"&ip="+token;
         console.log("Requesting url: "+url);
         request({url: url, json:true},(error,data) =>{
             console.log("Sniff request fullfilled!: "+error+ "---" +JSON.stringify(data));
@@ -216,7 +200,7 @@ function configureStandby(){
                 res.send("To begin regenerating the astrasystem's file structure, please go to /beginStartup");
             }
         }else{
-            VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
+            VAHCS_sniffer("[future token here]", "Green Machine Catalog Homepage");
             res.sendFile(__dirname+"/Astradux.html");
             update_FILECOUNTjs();
         }
@@ -289,13 +273,18 @@ function configureStandby(){
             }
         });
     });
+    
+    app.get("/middlewareTest", function(req, res){
+        console.log("Hey!");
+        res.send("Hello World!");
+    });
     app.get("*", function(req, res){
         if(regenerationInProgress){
             res.send("!Please stand by, astrasystem file structure regenerating...");
         }else if(preRegeneration){
             res.send("The astradux's file structure has not yet regenerated. To begin regenerating the astrasystem's file structure, please go to /beginStartup");
         }else{
-            VAHCS_sniffer(req, res, "Green Machine Catalog 404");
+            VAHCS_sniffer("[future token here]", "Green Machine Catalog 404");
             res.send("404!");
         }    
     });
@@ -317,7 +306,6 @@ function configureRequests(){
 
     app.get(["/Astradux.html", "/"], function(req, res){   //(request, response) hey callbacks!
         console.log("Well you're getting here...");
-        VAHCS_sniffer(req, res, "Green Machine Catalog Homepage");
         setTimeout(()=>{res.sendFile(__dirname+"/Astradux.html")},5000);
         update_FILECOUNTjs();
     });
@@ -335,6 +323,10 @@ function configureRequests(){
             console.log("Transfering Location...");
             transfereLocation(req.body.data);
             res.status(204).send();
+        }else if(req.body.command == "VAHCS_sniff"){
+            console.log("Sending sniff to VAHCS");
+            VAHCS_sniffer("[future token here]", "Green Machine Catalog Homepage");
+            res.status(204).send();
         }else{
             console.log("(!)A post request was made from Astradux.html, but the command was not recognized. Command: "+ req.body.command+" Data: "+ req.body.data);
             res.send("(!)A post request was made from Astradux.html, but the command was not recognized. Command: "+ req.body.command+" Data: "+ req.body.data);
@@ -342,7 +334,6 @@ function configureRequests(){
     });
 
     app.get("/addPart.html", function(req, res){
-        VAHCS_sniffer(req, res, "Green Machine Catalog addPart");
         res.sendFile(__dirname+"/addPart.html");
     });
     app.post("/addPart.html", function(req, res){
@@ -363,9 +354,6 @@ function configureRequests(){
             console.log("Timestamp: "+req.body.timestamp);
             console.log(("URI: "+req.body.uri).substring(0,30));
             storeImage(filePath, dataURI, "invImg");
-            /*imageDataURI.outputFile(dataURI, "./Inventory_Images/"+filePath)      //Old save to local storage code
-            // RETURNS image path of the created file 'out/path/fileName.png'
-                .then(res => console.log(res));*/
             addPart(req.body.data, true, res);
             console.log("v/ addPart_URI requset processed!");
             res.status(204).send();
@@ -377,7 +365,6 @@ function configureRequests(){
             console.log("Modifing Part Data. ModData from addPart.js: " + req.body.data);
             modifyPartData(req.body.data, res);
             res.status(204).send();
-            //res.sendFile(__dirname+"/Astradux.html");
         }else if(req.body.command == "undoAdd"){
             console.log("Modifing Part Data. ModData from addPart.js: " + req.body.data);
             modifyPartData(req.body.data, res);
@@ -385,15 +372,12 @@ function configureRequests(){
             console.log("Forign search Triggered from addPart");
             update_searchDATA(req.body.data);
             res.status(204).send();
-
-            //res.sendFile("."+"/Astradux.html");
         }else if(req.body.command == "wipeModData"){
             console.log("Wiping MODDATA clean...");
             wipeModData();
             res.status(204).send();
         }else if(req.body.command == "sendUserHome"){
             res.status(204).send();
-            //res.sendFile(__dirname+"/Astradux.html");
         }else if(req.body.command == "saveLocImg"){
             console.log("Processing requset to store a new Location_Image...");
             var filePath = req.body.timestamp;
@@ -405,6 +389,10 @@ function configureRequests(){
                 console.log("Location Img: "+filePath+" - done generating");
             });
             res.status(204).send();
+        }else if(req.body.command == "VAHCS_sniff"){
+            console.log("Sending sniff to VAHCS");
+            VAHCS_sniffer("[future token here]", "Green Machine Catalog Homepage Add a Part");
+            res.status(204).send();
         }else{
             console.log("(!)A post request was made from addPart.html, but the command was not recognized. Command: "+ req.body.command+" Data: "+ req.body.data);
             res.send("(!)A post request was made from addPart.html, but the command was not recognized. Command: "+ req.body.command+" Data: "+ req.body.data);
@@ -412,7 +400,6 @@ function configureRequests(){
     });
 
     app.get("/catagoryMap.html", function(req, res){   //(request, response) hey callbacks!
-        VAHCS_sniffer(req, res, "Green Machine Catalog Catagory Map");
         res.sendFile(__dirname+"/catagoryMap.html");
     });
     app.post("/catagoryMap.html", function(req, res){
@@ -425,6 +412,10 @@ function configureRequests(){
             console.log("Forign search Triggered from addPart");
             update_searchDATA(req.body.data);
             res.sendFile(__dirname+"/Astradux.html");
+        }else if(req.body.command == "VAHCS_sniff"){
+            console.log("Sending sniff to VAHCS");
+            VAHCS_sniffer("[future token here]", "Green Machine Catalog Catagory Map");
+            res.status(204).send();
         }else{
             console.log("(!)A post request was made from catagoryMap.html, but the command was not recognized. Command: "+ req.body.command+" Data: "+ req.body.data);
             res.send("(!)A post request was made from catagoryMap.html, but the command was not recognized. Command: "+ req.body.command+" Data: "+ req.body.data);
@@ -668,10 +659,6 @@ function storeImage(name, URI, type){
             }
         });
     }
-
-    /*if(URI != ""){
-        astrasystem.collection("INVENTORY_Images").insertOne({"name":name, "uri":URI});
-    }*/
 }
 function closeProgram(){
     console.log("Program Complete");
@@ -694,3 +681,4 @@ function closeProgram(){
 
 
 
+ 

