@@ -200,7 +200,6 @@ function configureStandby(){
                 res.send("To begin regenerating the astrasystem's file structure, please go to /beginStartup");
             }
         }else{
-            VAHCS_sniffer("[future token here]", "Green Machine Catalog Homepage");
             res.sendFile(__dirname+"/Astradux.html");
             update_FILECOUNTjs();
         }
@@ -284,7 +283,6 @@ function configureStandby(){
         }else if(preRegeneration){
             res.send("The astradux's file structure has not yet regenerated. To begin regenerating the astrasystem's file structure, please go to /beginStartup");
         }else{
-            VAHCS_sniffer("[future token here]", "Green Machine Catalog 404");
             res.send("404!");
         }    
     });
@@ -325,7 +323,7 @@ function configureRequests(){
             res.status(204).send();
         }else if(req.body.command == "VAHCS_sniff"){
             console.log("Sending sniff to VAHCS");
-            VAHCS_sniffer("[future token here]", "Green Machine Catalog Homepage");
+            VAHCS_sniffer(req.body.data, "Green Machine Catalog Homepage");
             res.status(204).send();
         }else{
             console.log("(!)A post request was made from Astradux.html, but the command was not recognized. Command: "+ req.body.command+" Data: "+ req.body.data);
@@ -391,7 +389,7 @@ function configureRequests(){
             res.status(204).send();
         }else if(req.body.command == "VAHCS_sniff"){
             console.log("Sending sniff to VAHCS");
-            VAHCS_sniffer("[future token here]", "Green Machine Catalog Homepage Add a Part");
+            VAHCS_sniffer(req.body.data, "Green Machine Catalog Homepage Add a Part");
             res.status(204).send();
         }else{
             console.log("(!)A post request was made from addPart.html, but the command was not recognized. Command: "+ req.body.command+" Data: "+ req.body.data);
@@ -414,7 +412,7 @@ function configureRequests(){
             res.sendFile(__dirname+"/Astradux.html");
         }else if(req.body.command == "VAHCS_sniff"){
             console.log("Sending sniff to VAHCS");
-            VAHCS_sniffer("[future token here]", "Green Machine Catalog Catagory Map");
+            VAHCS_sniffer(req.body.data, "Green Machine Catalog Catagory Map");
             res.status(204).send();
         }else{
             console.log("(!)A post request was made from catagoryMap.html, but the command was not recognized. Command: "+ req.body.command+" Data: "+ req.body.data);
